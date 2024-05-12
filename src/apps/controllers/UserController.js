@@ -98,7 +98,7 @@ class UserController {
   }
 
   async delete(req, res) {
-    const { id } = req.body;
+    const id = req.params.id;
     const userToDelete = await Users.findOne({
       where: {
         id: req.userId || id,
