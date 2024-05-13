@@ -1,4 +1,5 @@
 const Posts = require("../models/Posts");
+const Users = require("../models/Users");
 
 class postController {
   async create(req, res) {
@@ -140,6 +141,26 @@ class postController {
       return res
         .status(400)
         .json({ message: "Falha em listas todos os posts do usuario!" });
+    }
+
+    return res.status(200).json(allPosts);
+  }
+
+  async listAllPost(req, res) {
+    const allPosts = await Posts.findAll({
+      attributes: ["id", "image", "number_likes", "description"],
+      include: [
+        {
+          model: Users,
+          as: "user",
+          required: true,
+          attributes: ["id", "user_name", "avatar"],
+        },
+      ],
+    });
+
+    if (!allPosts) {
+      return res.status(400).json({ message: "Falha em listas todos os posts!" });
     }
 
     return res.status(200).json(allPosts);
