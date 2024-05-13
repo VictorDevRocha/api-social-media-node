@@ -14,7 +14,7 @@ class postController {
       return res.status(400).json({ message: "Falha ao cadastrar post!" });
     }
 
-    return res.status(200).json({ data: { image, description } });
+    return res.status(200).json({ message: "Post Criado com sucesso!" });
   }
 
   async delete(req, res) {
@@ -49,6 +49,45 @@ class postController {
     return res
       .status(200)
       .json({ message: "post deletado com sucesso!", postId: verifyPost.id });
+  }
+
+  async update(req, res) {
+    const { image, description, number_likes } = req.body;
+
+    const { id } = req.params;
+
+    const post = await Posts.findOne({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!post) {
+      return res.status(400).json({ message: "Post não encontrado!" });
+    }
+
+    if (post.author_id != req.userId) {
+      return res
+        .status(401)
+        .json({ message: "Você não tem permissão para atualizar este post!" });
+    }
+
+    const postUpdate = await Posts.update(
+      {
+        image: image || post.image,
+        description: description || post.description,
+        number_likes: number_likes || post.number_likes,
+      },
+      {
+        where: { id: post.id },
+      }
+    );
+
+    if (!postUpdate) {
+      return res.status(400).json({ message: "Falha ao atualizar post!" });
+    }
+
+    return res.status(200).json({ message: "Post atualizado com sucesso!" });
   }
 }
 
