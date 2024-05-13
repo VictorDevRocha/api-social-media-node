@@ -89,6 +89,46 @@ class postController {
 
     return res.status(200).json({ message: "Post atualizado com sucesso!" });
   }
+
+  async addLike(req, res) {
+    const { id } = req.params;
+
+    const post = await Posts.findOne({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!post) {
+      return res.status(400).json({ message: "Post não encontrado!" });
+    }
+
+    const postUpdate = await Posts.update(
+      {
+        number_likes: post.number_likes + 1,
+      },
+      {
+        where: { id: post.id },
+      }
+    );
+
+    if (!postUpdate) {
+      return res.status(400).json({ message: "Falha ao dar like no post!" });
+    }
+
+    const getPost = await Posts.findOne({
+      where: {
+        id: id,
+      },
+    });
+
+    return res
+      .status(200)
+      .json({
+        message: "Adicionado o Like com sucesso!",
+        number_likes: getPost.number_likes,
+      });
+  }
 }
 
 module.exports = new postController();
