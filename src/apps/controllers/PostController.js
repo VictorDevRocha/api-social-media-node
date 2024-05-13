@@ -122,12 +122,27 @@ class postController {
       },
     });
 
-    return res
-      .status(200)
-      .json({
-        message: "Adicionado o Like com sucesso!",
-        number_likes: getPost.number_likes,
-      });
+    return res.status(200).json({
+      message: "Adicionado o Like com sucesso!",
+      number_likes: getPost.number_likes,
+    });
+  }
+
+  async listMyPost(req, res) {
+    const allPosts = await Posts.findAll({
+      attributes: ["id", "image", "number_likes", "description"],
+      where: {
+        author_id: req.userId,
+      },
+    });
+
+    if (!allPosts) {
+      return res
+        .status(400)
+        .json({ message: "Falha em listas todos os posts do usuario!" });
+    }
+
+    return res.status(200).json(allPosts);
   }
 }
 
