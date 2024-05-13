@@ -3,7 +3,10 @@ const bcryptjs = require("bcrypt");
 
 class UserController {
   async getAllUsers(req, res) {
-    const allUsers = await Users.findAll();
+    const allUsers = await Users.findAll({
+      order: [["id", "DESC"]],
+      attributes: ["id", "name", "user_name", "bio", "email", "avatar", "gender"],
+    });
     res.send(allUsers);
   }
 
